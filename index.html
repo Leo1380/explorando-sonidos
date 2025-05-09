@@ -103,12 +103,12 @@
 </audio>
 
 <div class="portal left" onclick="openPortal('left')">
-  <h1>🌊 Música Meditativa</h1>
+  <h1 id='title-left'>🌊 Música Meditativa</h1>
   <p>Entrá a un mundo de calma y sonidos fluyentes</p>
 </div>
 
 <div class="portal right" onclick="openPortal('right')">
-  <h1>⚡ Hard Rock 80s</h1>
+  <h1 id='title-right'>⚡ Hard Rock 80s</h1>
   <p>Explorá el poder de los riffs y el neón eterno</p>
 </div>
 
@@ -146,7 +146,10 @@
 
 <script>
 function returnToPortal() {
-  document.querySelectorAll('.portal').forEach(el => el.classList.remove('hidden', 'active'));
+  document.querySelector('.left').classList.remove('active');
+  document.querySelector('.right').classList.remove('active');
+  document.querySelector('.left').classList.remove('hidden');
+  document.querySelector('.right').classList.remove('hidden');
   document.querySelector('#leftContent').classList.add('hidden');
   document.querySelector('#rightContent').classList.add('hidden');
   document.querySelector('.divider').style.display = 'block';
@@ -194,7 +197,37 @@ function animate() {
   requestAnimationFrame(animate);
 }
 animate();
+
+document.getElementById('title-left').style.display = 'none';
+document.getElementById('title-right').style.display = 'none';
+
+function openPortal(side) {
+  document.querySelector('.left').classList.add('hidden');
+  document.querySelector('.right').classList.add('hidden');
+  document.querySelector('.divider').style.display = 'none';
+  document.querySelector(`.${side}`).classList.remove('hidden');
+  document.querySelector(`.${side}`).classList.add('active');
+  document.getElementById(`${side}Content`).classList.remove('hidden');
+  const audio = document.getElementById(side === 'left' ? 'audioMeditativa' : 'audioRock');
+  audio.volume = 0.4;
+  audio.play();
+}
+
+function returnToPortal() {
+  document.querySelector('.left').classList.remove('active');
+  document.querySelector('.right').classList.remove('active');
+  document.querySelector('.left').classList.remove('hidden');
+  document.querySelector('.right').classList.remove('hidden');
+  document.querySelector('#leftContent').classList.add('hidden');
+  document.querySelector('#rightContent').classList.add('hidden');
+  document.querySelector('.divider').style.display = 'block';
+  document.getElementById('audioMeditativa').pause();
+  document.getElementById('audioRock').pause();
+  document.getElementById('title-left').style.display = 'block';
+  document.getElementById('title-right').style.display = 'block';
+}
 </script>
+
 
 </body>
 </html>
