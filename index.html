@@ -11,8 +11,9 @@
       padding: 0;
       font-family: 'Segoe UI', sans-serif;
       overflow: hidden;
-      background: black;
       height: 100vh;
+      background: linear-gradient(to bottom, #0f172a, #1e293b);
+      color: white;
     }
     .portal {
       position: fixed;
@@ -23,18 +24,29 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      transition: all 1s ease;
-      overflow: hidden;
-      color: white;
+      backdrop-filter: blur(10px);
       z-index: 1;
+      transition: all 0.8s ease;
     }
     .left {
       left: 0;
-      background: linear-gradient(to bottom right, #a5f3fc, #0ea5e9);
+      background: rgba(173, 216, 230, 0.15);
+      border-right: 1px solid rgba(255,255,255,0.08);
     }
     .right {
       right: 0;
-      background: linear-gradient(to bottom left, #3b0764, #9333ea);
+      background: rgba(128, 0, 128, 0.1);
+      border-left: 1px solid rgba(255,255,255,0.08);
+    }
+    .portal h1 {
+      font-size: 2rem;
+      margin: 0;
+    }
+    .portal p {
+      max-width: 300px;
+      text-align: center;
+      margin-top: 1rem;
+      color: rgba(255, 255, 255, 0.85);
     }
     .divider {
       position: fixed;
@@ -42,32 +54,38 @@
       left: 50%;
       width: 4px;
       height: 100%;
-      background: linear-gradient(to bottom, transparent, #8a2be2, transparent);
+      background: linear-gradient(to bottom, transparent, #c084fc, transparent);
       z-index: 2;
       animation: pulse 1.2s infinite alternate;
     }
+    .star {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 40px;
+      background: radial-gradient(circle, #fff, #c084fc, transparent);
+      border-radius: 50%;
+      box-shadow: 0 0 20px #c084fc;
+      animation: glow 2s ease-in-out infinite alternate;
+      z-index: 10;
+    }
     @keyframes pulse {
       from { opacity: 0.4; }
-      to { opacity: 1; box-shadow: 0 0 20px #8a2be2; }
+      to { opacity: 1; box-shadow: 0 0 20px #a855f7; }
     }
-    .portal h1 {
-      font-size: 2rem;
-      z-index: 3;
-      pointer-events: none;
-    }
-    .portal p {
-      max-width: 300px;
-      text-align: center;
-      pointer-events: none;
-    }
-    .portal.active {
-      width: 100%;
-      z-index: 10;
-      overflow-y: auto;
-      height: 100vh;
+    @keyframes glow {
+      from { opacity: 0.5; transform: translateX(-50%) scale(0.95); }
+      to { opacity: 1; transform: translateX(-50%) scale(1.1); }
     }
     .hidden {
-      display: none;
+      display: none !important;
+    }
+    .active {
+      width: 100% !important;
+      z-index: 10;
+      overflow-y: auto;
     }
     .section {
       padding: 4rem 2rem;
@@ -80,6 +98,14 @@
       border-radius: 12px;
       border: none;
       margin-top: 1rem;
+    }
+    button {
+      margin-top: 2rem;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
     }
     .particles {
       position: fixed;
@@ -95,6 +121,8 @@
 </head>
 <body>
 
+<div class="star"></div>
+
 <audio id="audioMeditativa">
   <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_0d08d5dd9d.mp3?filename=calm-relaxing-ambient-113325.mp3" type="audio/mpeg">
 </audio>
@@ -102,71 +130,79 @@
   <source src="https://cdn.pixabay.com/download/audio/2022/10/16/audio_9d939b7f84.mp3?filename=powerful-rock-intro-123376.mp3" type="audio/mpeg">
 </audio>
 
-<div class="portal left" onclick="openPortal('left')">
-  <h1 id='title-left'>🌊 Música Meditativa</h1>
+<canvas class="particles" id="particles"></canvas>
+
+<div id="portalLeft" class="portal left">
+  <h1>🌊 Música Meditativa</h1>
   <p>Entrá a un mundo de calma y sonidos fluyentes</p>
 </div>
 
-<div class="portal right" onclick="openPortal('right')">
-  <h1 id='title-right'>⚡ Hard Rock 80s</h1>
+<div id="portalRight" class="portal right">
+  <h1>⚡ Hard Rock 80s</h1>
   <p>Explorá el poder de los riffs y el neón eterno</p>
 </div>
 
-<div class="divider"></div>
-<canvas class="particles" id="particles"></canvas>
+<div class="divider" id="divider"></div>
 
+
+<div id="leftBackground" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:radial-gradient(circle at 50% 50%, rgba(173,216,230,0.15), transparent), url('https://media.giphy.com/media/3ohs4BSacFKI7A717y/giphy.gif');background-size:cover;background-repeat:no-repeat;background-position:center;"></div>
 <div id="leftContent" class="hidden">
-  <div class="section" style="background:#e0f7fa;color:#111;">
+
+  <div class="section" style="background:rgba(173, 216, 230, 0.08);color:#e0f7fa;">
     <h2>🌿 Meditación</h2>
     <p>Armonía, introspección y atmósferas líquidas.</p>
     <iframe src="https://www.youtube.com/embed/2OEL4P1Rz04" allowfullscreen></iframe>
+    <button onclick="returnToPortal()" style="background:#0ea5e9;color:white;">⬅️ Volver al Portal</button>
   </div>
-  <div class="section" style="background:#ccfbf1;color:#111;">
-    <h2>Biografía</h2>
-    <p>Artista que transforma silencio en paisaje sonoro sereno.</p>
-  </div>
-<div class="section" style="background:#a5f3fc;color:#111;">
-      <button onclick="returnToPortal()" style="padding:0.75rem 1.5rem;border:none;border-radius:8px;background:#0284c7;color:white;font-size:1rem;cursor:pointer;">⬅️ Volver al Portal</button>
-    </div>
 </div>
 
+
+<div id="rightBackground" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:radial-gradient(circle at 50% 50%, rgba(147,51,234,0.1), transparent), url('https://media.giphy.com/media/5xaOcLGvzHxDKjufnLW/giphy.gif');background-size:cover;background-repeat:no-repeat;background-position:center;"></div>
 <div id="rightContent" class="hidden">
-  <div class="section" style="background:#2e1065;">
-    <h2>🔥 Rock Neón</h2>
-    <p>Sonido ochentoso, pasión eléctrica, legado inmortal.</p>
+
+  <div class="section" style="background:rgba(98, 0, 128, 0.12);color:#f3e8ff;">
+    <h2>🎸 Rock Neón</h2>
+    <p>Pasión eléctrica en cada acorde ochentoso.</p>
     <iframe src="https://www.youtube.com/embed/mfTpjrzas1o" allowfullscreen></iframe>
+    <button onclick="returnToPortal()" style="background:#9333ea;color:white;">⬅️ Volver al Portal</button>
   </div>
-  <div class="section" style="background:#4c1d95;">
-    <h2>Biografía</h2>
-    <p>Guardián de riffs, viajero de frecuencias pesadas.</p>
-  <div class="section" style="background:#6b21a8;">
-      <button onclick="returnToPortal()" style="padding:0.75rem 1.5rem;border:none;border-radius:8px;background:#9333ea;color:white;font-size:1rem;cursor:pointer;">⬅️ Volver al Portal</button>
-    </div>
 </div>
 
 <script>
-function returnToPortal() {
-  document.querySelector('.left').classList.remove('active');
-  document.querySelector('.right').classList.remove('active');
-  document.querySelector('.left').classList.remove('hidden');
-  document.querySelector('.right').classList.remove('hidden');
-  document.querySelector('#leftContent').classList.add('hidden');
-  document.querySelector('#rightContent').classList.add('hidden');
-  document.querySelector('.divider').style.display = 'block';
-  document.getElementById('audioMeditativa').pause();
-  document.getElementById('audioRock').pause();
-}
-function openPortal(side) {
-  document.querySelector('.left').classList.add('hidden');
-  document.querySelector('.right').classList.add('hidden');
-  document.querySelector('.divider').style.display = 'none';
-  document.querySelector(`.${side}`).classList.remove('hidden');
-  document.querySelector(`.${side}`).classList.add('active');
-  document.getElementById(`${side}Content`).classList.remove('hidden');
+document.getElementById("portalLeft").onclick = () => openPortal("left");
+document.getElementById("portalRight").onclick = () => openPortal("right");
 
-  const audio = document.getElementById(side === 'left' ? 'audioMeditativa' : 'audioRock');
-  audio.volume = 0.4;
-  audio.play();
+function openPortal(side) {
+  document.getElementById("portalLeft").classList.add("hidden");
+  document.getElementById("portalRight").classList.add("hidden");
+  document.getElementById("divider").classList.add("hidden");
+
+  if (side === "left") {
+    document.getElementById("portalLeft").classList.add("active");
+    document.getElementById("leftContent").classList.remove("hidden");
+    document.getElementById("audioMeditativa").volume = 0.4;
+    document.getElementById("audioMeditativa").play();
+  } else {
+    document.getElementById("portalRight").classList.add("active");
+    document.getElementById("rightContent").classList.remove("hidden");
+    document.getElementById("audioRock").volume = 0.4;
+    document.getElementById("audioRock").play();
+  }
+}
+
+function returnToPortal() {
+  document.getElementById("portalLeft").classList.remove("active", "hidden");
+  document.getElementById("portalRight").classList.remove("active", "hidden");
+  document.getElementById("leftContent").classList.add("hidden");
+  document.getElementById("leftBackground").classList.add("hidden");
+  document.getElementById("rightContent").classList.add("hidden");
+  document.getElementById("rightBackground").classList.add("hidden");
+  document.getElementById("divider").classList.remove("hidden");
+
+  document.getElementById("audioMeditativa").pause();
+  document.getElementById("audioMeditativa").currentTime = 0;
+  document.getElementById("audioRock").pause();
+  document.getElementById("audioRock").currentTime = 0;
 }
 
 // Partículas flotantes
@@ -197,37 +233,7 @@ function animate() {
   requestAnimationFrame(animate);
 }
 animate();
-
-document.getElementById('title-left').style.display = 'none';
-document.getElementById('title-right').style.display = 'none';
-
-function openPortal(side) {
-  document.querySelector('.left').classList.add('hidden');
-  document.querySelector('.right').classList.add('hidden');
-  document.querySelector('.divider').style.display = 'none';
-  document.querySelector(`.${side}`).classList.remove('hidden');
-  document.querySelector(`.${side}`).classList.add('active');
-  document.getElementById(`${side}Content`).classList.remove('hidden');
-  const audio = document.getElementById(side === 'left' ? 'audioMeditativa' : 'audioRock');
-  audio.volume = 0.4;
-  audio.play();
-}
-
-function returnToPortal() {
-  document.querySelector('.left').classList.remove('active');
-  document.querySelector('.right').classList.remove('active');
-  document.querySelector('.left').classList.remove('hidden');
-  document.querySelector('.right').classList.remove('hidden');
-  document.querySelector('#leftContent').classList.add('hidden');
-  document.querySelector('#rightContent').classList.add('hidden');
-  document.querySelector('.divider').style.display = 'block';
-  document.getElementById('audioMeditativa').pause();
-  document.getElementById('audioRock').pause();
-  document.getElementById('title-left').style.display = 'block';
-  document.getElementById('title-right').style.display = 'block';
-}
 </script>
-
 
 </body>
 </html>
