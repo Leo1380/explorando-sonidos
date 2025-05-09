@@ -4,155 +4,153 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Explorando Sonidos - Cinemático</title>
+  <title>Explorando Sonidos - Explosión Sonora</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', sans-serif;
       background: #0d0d1a;
+      font-family: 'Segoe UI', sans-serif;
       color: white;
-      overflow-x: hidden;
+      overflow: hidden;
     }
-    #intro {
+    canvas#bg {
       position: fixed;
-      width: 100%;
-      height: 100%;
-      background: black;
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      animation: fadeOut 3.5s forwards 2.5s;
-    }
-    #intro h1 {
-      font-size: 3rem;
-      opacity: 0;
-      animation: fadeIn 2s ease-in-out forwards;
-      color: #8a2be2;
-    }
-    @keyframes fadeIn {
-      to { opacity: 1; }
-    }
-    @keyframes fadeOut {
-      to { opacity: 0; visibility: hidden; }
-    }
-    header {
+      top: 0; left: 0;
+      z-index: 0;
+      width: 100vw;
       height: 100vh;
+      pointer-events: none;
+    }
+    .container {
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      height: 100vh;
+      z-index: 1;
       position: relative;
-      z-index: 2;
+      padding: 2rem;
     }
-    header h1 {
-      font-size: 3rem;
-      backdrop-filter: blur(10px);
-      background: rgba(255, 255, 255, 0.1);
-      padding: 1rem 2rem;
-      border-radius: 20px;
-    }
-    .section {
-      padding: 4rem 2rem;
-      text-align: center;
-    }
-    .glass {
-      max-width: 600px;
-      margin: 2rem auto;
+    .block {
+      flex: 1 1 350px;
+      max-width: 500px;
+      margin: 1rem;
+      padding: 2rem;
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.1);
-      backdrop-filter: blur(15px);
-      padding: 2rem;
-      border-radius: 20px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(138, 43, 226, 0.4);
+      z-index: 2;
     }
     iframe {
+      width: 100%;
+      height: 250px;
       border-radius: 10px;
       border: none;
-    }
-    audio {
-      width: 100%;
       margin-top: 1rem;
     }
-    canvas#dust {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: -1;
-      pointer-events: none;
+    h1 {
+      position: absolute;
+      top: 2rem;
+      width: 100%;
+      text-align: center;
+      z-index: 3;
+      font-size: 2rem;
     }
   </style>
 </head>
 <body>
 
-<div id="intro">
-  <h1>Explorando Sonidos</h1>
+<h1>⚡ Explorando Sonidos: Explosión Sonora</h1>
+<canvas id="bg"></canvas>
+
+<div class="container">
+  <div class="block">
+    <h2>🌿 Música Meditativa</h2>
+    <p>Sonidos envolventes y profundos.</p>
+    <iframe src="https://www.youtube.com/embed/2OEL4P1Rz04" allowfullscreen></iframe>
+  </div>
+  <div class="block">
+    <h2>⚡ Hard Rock 80s</h2>
+    <p>Riffs eléctricos y energía visual.</p>
+    <iframe src="https://www.youtube.com/embed/mfTpjrzas1o" allowfullscreen></iframe>
+  </div>
 </div>
 
-<canvas id="dust"></canvas>
-
-<header>
-  <h1>Bienvenido al Viaje Sonoro</h1>
-</header>
-
-<section class="section">
-  <div class="glass">
-    <h2>🌿 Música Meditativa</h2>
-    <p>Inspiración profunda entre atmósferas y naturaleza.</p>
-    <iframe width="100%" height="250" src="https://www.youtube.com/embed/2OEL4P1Rz04" allowfullscreen></iframe>
-  </div>
-</section>
-
-<section class="section">
-  <div class="glass">
-    <h2>⚡ Hard Rock 80s</h2>
-    <p>Poder eléctrico en riffs vibrantes y sintetizadores épicos.</p>
-    <iframe width="100%" height="250" src="https://www.youtube.com/embed/mfTpjrzas1o" allowfullscreen></iframe>
-  </div>
-</section>
-
-<section class="section">
-  <div class="glass">
-    <h2>🎧 Cassette Player</h2>
-    <audio controls>
-      <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-    </audio>
-  </div>
-</section>
-
 <script>
-const canvas = document.getElementById('dust');
-const ctx = canvas.getContext('2d');
-let w, h, particles;
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-function initParticles() {
-  w = canvas.width = window.innerWidth;
-  h = canvas.height = window.innerHeight;
-  particles = Array.from({length: 120}, () => ({
-    x: Math.random() * w,
-    y: Math.random() * h,
-    r: Math.random() * 1.5 + 0.5,
-    dx: (Math.random() - 0.5) * 0.2,
-    dy: (Math.random() - 0.5) * 0.2,
-    opacity: Math.random() * 0.5 + 0.2
-  }));
-}
-function animate() {
-  ctx.clearRect(0, 0, w, h);
-  for (let p of particles) {
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity})`;
-    ctx.fill();
-    p.x += p.dx;
-    p.y += p.dy;
-    if (p.x < 0 || p.x > w) p.dx *= -1;
-    if (p.y < 0 || p.y > h) p.dy *= -1;
+let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+let explosions = [];
+
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+document.addEventListener("mousemove", e => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+});
+
+document.addEventListener("click", e => {
+  explosions.push({ x: e.clientX, y: e.clientY, r: 0, opacity: 1 });
+});
+
+function drawLightning(x1, y1, x2, y2, segments = 20, roughness = 10) {
+  let points = [{ x: x1, y: y1 }];
+  for (let i = 1; i < segments; i++) {
+    let t = i / segments;
+    points.push({
+      x: x1 + (x2 - x1) * t + (Math.random() - 0.5) * roughness,
+      y: y1 + (y2 - y1) * t + (Math.random() - 0.5) * roughness
+    });
   }
+  points.push({ x: x2, y: y2 });
+
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, points[0].y);
+  for (let pt of points) {
+    ctx.lineTo(pt.x, pt.y);
+  }
+  ctx.strokeStyle = "rgba(138,43,226,0.7)";
+  ctx.lineWidth = 2;
+  ctx.shadowColor = "#8a2be2";
+  ctx.shadowBlur = 10;
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  let midY = canvas.height / 2;
+  let leftX = canvas.width / 4;
+  let rightX = (canvas.width / 4) * 3;
+
+  drawLightning(leftX, midY, mouse.x, mouse.y);
+  drawLightning(mouse.x, mouse.y, rightX, midY);
+
+  // Explosiones
+  for (let i = explosions.length - 1; i >= 0; i--) {
+    const e = explosions[i];
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(255,255,255,${e.opacity})`;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    e.r += 4;
+    e.opacity -= 0.03;
+    if (e.opacity <= 0) explosions.splice(i, 1);
+  }
+
   requestAnimationFrame(animate);
 }
-window.addEventListener('resize', initParticles);
-initParticles();
 animate();
 </script>
 
