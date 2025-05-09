@@ -24,6 +24,7 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      max-width: 40vw;
       backdrop-filter: blur(10px);
       z-index: 1;
       transition: all 0.8s ease;
@@ -63,8 +64,8 @@
       top: 20px;
       left: 50%;
       transform: translateX(-50%);
-      width: 40px;
-      height: 40px;
+      width: 200px;
+      height: 200px;
       background: radial-gradient(circle, #fff, #c084fc, transparent);
       border-radius: 50%;
       box-shadow: 0 0 20px #c084fc;
@@ -210,13 +211,13 @@ const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-let particles = Array.from({length: 80}, () => ({
+let particles = Array.from({length: 50}, () => ({
   x: Math.random() * canvas.width,
   y: Math.random() * canvas.height,
-  r: Math.random() * 1.5 + 0.5,
+  r: Math.random() * 2.5 + 0.8,
   dx: (Math.random() - 0.5) * 0.3,
   dy: (Math.random() - 0.5) * 0.3,
-  o: Math.random() * 0.5 + 0.2
+  o: Math.random() * 0.15 + 0.05
 }));
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -224,6 +225,8 @@ function animate() {
     ctx.beginPath();
     ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
     ctx.fillStyle = `rgba(255,255,255,${p.o})`;
+    ctx.shadowColor = "rgba(255,255,255,0.4)";
+    ctx.shadowBlur = 6;
     ctx.fill();
     p.x += p.dx;
     p.y += p.dy;
