@@ -3,163 +3,181 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Explorando Sonidos - Meditación Celeste</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portales de Sonido</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      background: #0d0d1a;
       font-family: 'Segoe UI', sans-serif;
-      color: white;
       overflow: hidden;
-    }
-    canvas#bg {
-      position: fixed;
-      top: 0; left: 0;
-      z-index: 0;
-      width: 100vw;
+      background: black;
       height: 100vh;
-      pointer-events: none;
     }
-    .container {
+    .portal {
+      position: fixed;
+      top: 0;
+      width: 50%;
+      height: 100%;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      flex-wrap: wrap;
-      height: 100vh;
+      transition: all 1s ease;
+      overflow: hidden;
+      color: white;
       z-index: 1;
-      position: relative;
-      padding: 2rem;
     }
-    .block {
-      flex: 1 1 350px;
-      max-width: 500px;
-      margin: 1rem;
-      padding: 2rem;
-      backdrop-filter: blur(12px);
-      border-radius: 16px;
-      box-shadow: 0 0 20px rgba(138, 43, 226, 0.4);
+    .left {
+      left: 0;
+      background: linear-gradient(to bottom right, #a5f3fc, #0ea5e9);
+    }
+    .right {
+      right: 0;
+      background: linear-gradient(to bottom left, #3b0764, #9333ea);
+    }
+    .divider {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(to bottom, transparent, #8a2be2, transparent);
       z-index: 2;
+      animation: pulse 1.2s infinite alternate;
     }
-    .meditativa {
-      background: rgba(0, 200, 255, 0.08);
-      border: 1px solid rgba(0, 200, 255, 0.3);
-      box-shadow: 0 0 20px rgba(0, 200, 255, 0.4);
+    @keyframes pulse {
+      from { opacity: 0.4; }
+      to { opacity: 1; box-shadow: 0 0 20px #8a2be2; }
     }
-    .rock {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+    .portal h1 {
+      font-size: 2rem;
+      z-index: 3;
+      pointer-events: none;
     }
-    iframe {
+    .portal p {
+      max-width: 300px;
+      text-align: center;
+      pointer-events: none;
+    }
+    .portal.active {
       width: 100%;
+      z-index: 10;
+      overflow-y: auto;
+      height: 100vh;
+    }
+    .hidden {
+      display: none;
+    }
+    .section {
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+    .section iframe {
+      width: 90%;
+      max-width: 500px;
       height: 250px;
-      border-radius: 10px;
+      border-radius: 12px;
       border: none;
       margin-top: 1rem;
     }
-    h1 {
-      position: absolute;
-      top: 2rem;
-      width: 100%;
-      text-align: center;
-      z-index: 3;
-      font-size: 2rem;
+    .particles {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
     }
-  @keyframes fadeIn { to { opacity: 1; } }
-    @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
-</style>
+    audio {
+      display: none;
+    }
+  </style>
 </head>
 <body>
-<div id="intro" style="position:fixed;width:100%;height:100%;background:black;z-index:9999;display:flex;align-items:center;justify-content:center;animation:fadeOut 3.5s forwards 2.5s;">
-  <h1 style="font-size:3rem;color:#0cf;opacity:0;animation:fadeIn 2s ease-in-out forwards;">Explorando Sonidos</h1>
+
+<audio id="audioMeditativa">
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_0d08d5dd9d.mp3?filename=calm-relaxing-ambient-113325.mp3" type="audio/mpeg">
+</audio>
+<audio id="audioRock">
+  <source src="https://cdn.pixabay.com/download/audio/2022/10/16/audio_9d939b7f84.mp3?filename=powerful-rock-intro-123376.mp3" type="audio/mpeg">
+</audio>
+
+<div class="portal left" onclick="openPortal('left')">
+  <h1>🌊 Música Meditativa</h1>
+  <p>Entrá a un mundo de calma y sonidos fluyentes</p>
 </div>
 
-<h1>⚡ Explorando Sonidos: Meditación y Rock</h1>
-<canvas id="bg"></canvas>
+<div class="portal right" onclick="openPortal('right')">
+  <h1>⚡ Hard Rock 80s</h1>
+  <p>Explorá el poder de los riffs y el neón eterno</p>
+</div>
 
-<div class="container">
-  <div class="block meditativa">
-    <h2>🌿 Música Meditativa</h2>
-    <p>Sonidos envolventes en una atmósfera celeste.</p>
+<div class="divider"></div>
+<canvas class="particles" id="particles"></canvas>
+
+<div id="leftContent" class="hidden">
+  <div class="section" style="background:#e0f7fa;color:#111;">
+    <h2>🌿 Meditación</h2>
+    <p>Armonía, introspección y atmósferas líquidas.</p>
     <iframe src="https://www.youtube.com/embed/2OEL4P1Rz04" allowfullscreen></iframe>
   </div>
-  <div class="block rock">
-    <h2>⚡ Hard Rock 80s</h2>
-    <p>Riffs eléctricos y energía visual.</p>
+  <div class="section" style="background:#ccfbf1;color:#111;">
+    <h2>Biografía</h2>
+    <p>Artista que transforma silencio en paisaje sonoro sereno.</p>
+  </div>
+</div>
+
+<div id="rightContent" class="hidden">
+  <div class="section" style="background:#2e1065;">
+    <h2>🔥 Rock Neón</h2>
+    <p>Sonido ochentoso, pasión eléctrica, legado inmortal.</p>
     <iframe src="https://www.youtube.com/embed/mfTpjrzas1o" allowfullscreen></iframe>
+  </div>
+  <div class="section" style="background:#4c1d95;">
+    <h2>Biografía</h2>
+    <p>Guardián de riffs, viajero de frecuencias pesadas.</p>
   </div>
 </div>
 
 <script>
-const canvas = document.getElementById("bg");
+function openPortal(side) {
+  document.querySelector('.left').classList.add('hidden');
+  document.querySelector('.right').classList.add('hidden');
+  document.querySelector('.divider').style.display = 'none';
+  document.querySelector(`.${side}`).classList.remove('hidden');
+  document.querySelector(`.${side}`).classList.add('active');
+  document.getElementById(`${side}Content`).classList.remove('hidden');
+
+  const audio = document.getElementById(side === 'left' ? 'audioMeditativa' : 'audioRock');
+  audio.volume = 0.4;
+  audio.play();
+}
+
+// Partículas flotantes
+const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-
-let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
-let explosions = [];
-
-window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
-
-document.addEventListener("mousemove", e => {
-  mouse.x = e.clientX;
-  mouse.y = e.clientY;
-});
-
-document.addEventListener("click", e => {
-  explosions.push({ x: e.clientX, y: e.clientY, r: 0, opacity: 1 });
-});
-
-function drawLightning(x1, y1, x2, y2, segments = 20, roughness = 10) {
-  let points = [{ x: x1, y: y1 }];
-  for (let i = 1; i < segments; i++) {
-    let t = i / segments;
-    points.push({
-      x: x1 + (x2 - x1) * t + (Math.random() - 0.5) * roughness,
-      y: y1 + (y2 - y1) * t + (Math.random() - 0.5) * roughness
-    });
-  }
-  points.push({ x: x2, y: y2 });
-
-  ctx.beginPath();
-  ctx.moveTo(points[0].x, points[0].y);
-  for (let pt of points) {
-    ctx.lineTo(pt.x, pt.y);
-  }
-  ctx.strokeStyle = "rgba(138,43,226,0.7)";
-  ctx.lineWidth = 2;
-  ctx.shadowColor = "#8a2be2";
-  ctx.shadowBlur = 10;
-  ctx.stroke();
-  ctx.shadowBlur = 0;
-}
-
+let particles = Array.from({length: 80}, () => ({
+  x: Math.random() * canvas.width,
+  y: Math.random() * canvas.height,
+  r: Math.random() * 1.5 + 0.5,
+  dx: (Math.random() - 0.5) * 0.3,
+  dy: (Math.random() - 0.5) * 0.3,
+  o: Math.random() * 0.5 + 0.2
+}));
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  let midY = canvas.height / 2;
-  let leftX = canvas.width / 4;
-  let rightX = (canvas.width / 4) * 3;
-
-  drawLightning(leftX, midY, mouse.x, mouse.y);
-  drawLightning(mouse.x, mouse.y, rightX, midY);
-
-  for (let i = explosions.length - 1; i >= 0; i--) {
-    const e = explosions[i];
+  for (let p of particles) {
     ctx.beginPath();
-    ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2);
-    ctx.strokeStyle = `rgba(0,200,255,${e.opacity})`;
-    ctx.lineWidth = 3;
-    ctx.stroke();
-    e.r += 4;
-    e.opacity -= 0.03;
-    if (e.opacity <= 0) explosions.splice(i, 1);
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${p.o})`;
+    ctx.fill();
+    p.x += p.dx;
+    p.y += p.dy;
+    if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+    if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
   }
-
   requestAnimationFrame(animate);
 }
 animate();
