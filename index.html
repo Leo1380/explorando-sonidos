@@ -2,46 +2,55 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Explorando Sonidos | Épico</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Explorando Sonidos - Cinemático</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      overflow-x: hidden;
       font-family: 'Segoe UI', sans-serif;
-      background: #0f0f1b;
-      color: #fff;
+      background: #0d0d1a;
+      color: white;
+      overflow-x: hidden;
+    }
+    #intro {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: black;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeOut 3.5s forwards 2.5s;
+    }
+    #intro h1 {
+      font-size: 3rem;
+      opacity: 0;
+      animation: fadeIn 2s ease-in-out forwards;
+      color: #8a2be2;
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+    @keyframes fadeOut {
+      to { opacity: 0; visibility: hidden; }
     }
     header {
-      position: relative;
       height: 100vh;
-      overflow: hidden;
-    }
-    header video {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      object-fit: cover;
-      z-index: -1;
-      filter: brightness(0.5);
-    }
-    .intro {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       position: relative;
-      top: 50%;
-      transform: translateY(-50%);
-      text-align: center;
       z-index: 2;
     }
-    .intro h1 {
+    header h1 {
       font-size: 3rem;
-      backdrop-filter: blur(5px);
+      backdrop-filter: blur(10px);
       background: rgba(255, 255, 255, 0.1);
-      display: inline-block;
       padding: 1rem 2rem;
-      border-radius: 15px;
-      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px;
     }
     .section {
       padding: 4rem 2rem;
@@ -57,49 +66,39 @@
       border-radius: 20px;
       box-shadow: 0 8px 32px rgba(0,0,0,0.5);
     }
-    .cassette {
-      display: inline-block;
-      margin-top: 1rem;
-      background: #1f1f2e;
-      padding: 1rem;
+    iframe {
       border-radius: 10px;
-      box-shadow: 0 0 20px #8a2be2;
-    }
-    .cassette::before {
-      content: "▌▌ Cassette Mode ▌▌";
-      display: block;
-      font-weight: bold;
-      margin-bottom: 0.5rem;
+      border: none;
     }
     audio {
       width: 100%;
+      margin-top: 1rem;
     }
-    .particles {
+    canvas#dust {
       position: fixed;
-      top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
+      top: 0;
+      left: 0;
+      z-index: -1;
       pointer-events: none;
-      z-index: -2;
     }
   </style>
 </head>
 <body>
 
+<div id="intro">
+  <h1>Explorando Sonidos</h1>
+</div>
+
+<canvas id="dust"></canvas>
+
 <header>
-  <video autoplay muted loop>
-    <source src="https://www.w3schools.com/howto/rain.mp4" type="video/mp4">
-  </video>
-  <div class="intro">
-    <h1>Explorando Sonidos</h1>
-  </div>
-  <canvas class="particles" id="particles"></canvas>
+  <h1>Bienvenido al Viaje Sonoro</h1>
 </header>
 
 <section class="section">
   <div class="glass">
     <h2>🌿 Música Meditativa</h2>
-    <p>Sonidos envolventes para la introspección profunda.</p>
+    <p>Inspiración profunda entre atmósferas y naturaleza.</p>
     <iframe width="100%" height="250" src="https://www.youtube.com/embed/2OEL4P1Rz04" allowfullscreen></iframe>
   </div>
 </section>
@@ -107,13 +106,14 @@
 <section class="section">
   <div class="glass">
     <h2>⚡ Hard Rock 80s</h2>
-    <p>Riffs potentes en colores púrpura eléctrico y neón digital.</p>
+    <p>Poder eléctrico en riffs vibrantes y sintetizadores épicos.</p>
     <iframe width="100%" height="250" src="https://www.youtube.com/embed/mfTpjrzas1o" allowfullscreen></iframe>
   </div>
 </section>
 
 <section class="section">
-  <div class="glass cassette">
+  <div class="glass">
+    <h2>🎧 Cassette Player</h2>
     <audio controls>
       <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
     </audio>
@@ -121,43 +121,39 @@
 </section>
 
 <script>
-const canvas = document.getElementById("particles");
-const ctx = canvas.getContext("2d");
-let particles = [];
+const canvas = document.getElementById('dust');
+const ctx = canvas.getContext('2d');
+let w, h, particles;
 
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+function initParticles() {
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
+  particles = Array.from({length: 120}, () => ({
+    x: Math.random() * w,
+    y: Math.random() * h,
+    r: Math.random() * 1.5 + 0.5,
+    dx: (Math.random() - 0.5) * 0.2,
+    dy: (Math.random() - 0.5) * 0.2,
+    opacity: Math.random() * 0.5 + 0.2
+  }));
 }
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
-
-for (let i = 0; i < 100; i++) {
-  particles.push({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    r: Math.random() * 2 + 1,
-    dx: (Math.random() - 0.5) * 0.5,
-    dy: (Math.random() - 0.5) * 0.5,
-  });
-}
-
-function drawParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "#8a2be2";
-  particles.forEach(p => {
+function animate() {
+  ctx.clearRect(0, 0, w, h);
+  for (let p of particles) {
     ctx.beginPath();
     ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity})`;
     ctx.fill();
     p.x += p.dx;
     p.y += p.dy;
-
-    if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-    if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
-  });
-  requestAnimationFrame(drawParticles);
+    if (p.x < 0 || p.x > w) p.dx *= -1;
+    if (p.y < 0 || p.y > h) p.dy *= -1;
+  }
+  requestAnimationFrame(animate);
 }
-drawParticles();
+window.addEventListener('resize', initParticles);
+initParticles();
+animate();
 </script>
 
 </body>
