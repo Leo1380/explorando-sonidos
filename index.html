@@ -125,6 +125,9 @@
     <h2>Biografía</h2>
     <p>Artista que transforma silencio en paisaje sonoro sereno.</p>
   </div>
+<div class="section" style="background:#a5f3fc;color:#111;">
+      <button onclick="returnToPortal()" style="padding:0.75rem 1.5rem;border:none;border-radius:8px;background:#0284c7;color:white;font-size:1rem;cursor:pointer;">⬅️ Volver al Portal</button>
+    </div>
 </div>
 
 <div id="rightContent" class="hidden">
@@ -136,10 +139,20 @@
   <div class="section" style="background:#4c1d95;">
     <h2>Biografía</h2>
     <p>Guardián de riffs, viajero de frecuencias pesadas.</p>
-  </div>
+  <div class="section" style="background:#6b21a8;">
+      <button onclick="returnToPortal()" style="padding:0.75rem 1.5rem;border:none;border-radius:8px;background:#9333ea;color:white;font-size:1rem;cursor:pointer;">⬅️ Volver al Portal</button>
+    </div>
 </div>
 
 <script>
+function returnToPortal() {
+  document.querySelectorAll('.portal').forEach(el => el.classList.remove('hidden', 'active'));
+  document.querySelector('#leftContent').classList.add('hidden');
+  document.querySelector('#rightContent').classList.add('hidden');
+  document.querySelector('.divider').style.display = 'block';
+  document.getElementById('audioMeditativa').pause();
+  document.getElementById('audioRock').pause();
+}
 function openPortal(side) {
   document.querySelector('.left').classList.add('hidden');
   document.querySelector('.right').classList.add('hidden');
